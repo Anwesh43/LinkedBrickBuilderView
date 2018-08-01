@@ -18,10 +18,10 @@ fun Canvas.drawBBNode(i : Int, scale : Float, cb : (Canvas) -> Unit, paint : Pai
     paint.color = Color.parseColor("#f44336")
     val yGap : Float = (0.4f * h) / nodes
     val xGap : Float = w / nodes
-    val wSize : Float = xGap/3
+    val wSize : Float = xGap
     val sc1 : Float = Math.min(0.5f, scale) * 2
     val sc2 : Float = Math.min(0.5f, Math.max(0f, scale - 0.5f)) * 2
-    val y : Float = yGap + (h - yGap) * (1 - sc1)
+    val y : Float = yGap * i + (h - yGap * i) * (1 - sc1)
     save()
     translate(xGap * sc2, 0f)
     cb(this)
@@ -39,6 +39,7 @@ fun Canvas.drawBBNode(i : Int, scale : Float, cb : (Canvas) -> Unit, paint : Pai
 
 val nodes : Int = 5
 
+val speed : Float = 0.05f
 class BrickBuilderView(ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -61,7 +62,7 @@ class BrickBuilderView(ctx : Context) : View(ctx) {
     data class State(var scale : Float = 0f, var dir : Float = 0f, var prevScale : Float = 0f) {
 
         fun update(cb : (Float) -> Unit) {
-            scale += 0.1f * dir
+            scale += speed * dir
             if (Math.abs(scale - prevScale) > 1) {
                 scale = prevScale + dir
                 dir = 0f
@@ -118,7 +119,7 @@ class BrickBuilderView(ctx : Context) : View(ctx) {
 
         fun draw(canvas : Canvas, paint : Paint) {
             canvas.drawBBNode(i, state.scale, {
-                next?.draw(it, paint)
+                prev?.draw(it, paint)
             }, paint)
         }
 
