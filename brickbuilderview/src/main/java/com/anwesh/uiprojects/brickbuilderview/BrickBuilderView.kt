@@ -23,6 +23,7 @@ fun Canvas.drawBBNode(i : Int, scale : Float, cb : (Canvas) -> Unit, paint : Pai
     val y : Float = yGap + (h - yGap) * (1 - sc1)
     save()
     translate(xGap * sc2, 0f)
+    cb(this)
     save()
     translate(xGap * i + xGap / 2, h/2)
     for(j in 0..1) {
@@ -99,6 +100,52 @@ class BrickBuilderView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class BBNode(var i : Int, val state : State = State()) {
+
+        private var next : BBNode? = null
+
+        private var prev : BBNode? = null
+
+        init {
+            addNeighbor()
+        }
+        
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawBBNode(i, state.scale, {
+                next?.draw(it, paint)
+            }, paint)
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = BBNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun update(cb : (Int, Float) -> Unit) {
+            state.update {
+                cb(i, it)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : BBNode {
+            var curr : BBNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
