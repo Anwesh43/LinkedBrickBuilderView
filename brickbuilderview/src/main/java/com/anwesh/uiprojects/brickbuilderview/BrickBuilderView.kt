@@ -3,6 +3,7 @@ package com.anwesh.uiprojects.brickbuilderview
 /**
  * Created by anweshmishra on 02/08/18.
  */
+import android.app.Activity
 import android.view.View
 import android.view.MotionEvent
 import android.graphics.Paint
@@ -195,6 +196,14 @@ class BrickBuilderView(ctx : Context) : View(ctx) {
             linkedBB.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : BrickBuilderView{
+            val view : BrickBuilderView = BrickBuilderView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
