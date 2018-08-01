@@ -8,6 +8,32 @@ import android.view.MotionEvent
 import android.graphics.Paint
 import android.graphics.Canvas
 import android.content.Context
+import android.graphics.Color
+import android.graphics.RectF
+
+fun Canvas.drawBBNode(i : Int, scale : Float, cb : (Canvas) -> Unit, paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    paint.color = Color.parseColor("#f44336")
+    val yGap : Float = (0.4f * h) / nodes
+    val xGap : Float = w / nodes
+    val wSize : Float = xGap/3
+    val sc1 : Float = Math.min(0.5f, scale) * 2
+    val sc2 : Float = Math.min(0.5f, Math.max(0f, scale - 0.5f)) * 2
+    val y : Float = yGap + (h - yGap) * (1 - sc1)
+    save()
+    translate(xGap * sc2, 0f)
+    save()
+    translate(xGap * i + xGap / 2, h/2)
+    for(j in 0..1) {
+        save()
+        scale(1f, 1f - 2 * j)
+        drawRect(RectF(-wSize / 2, y, wSize / 2, y + yGap), paint)
+        restore()
+    }
+    restore()
+    restore()
+}
 
 val nodes : Int = 5
 
