@@ -172,4 +172,27 @@ class BrickBuilderView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : BrickBuilderView) {
+
+        private val linkedBB : LinkedBrickBuilder = LinkedBrickBuilder(0)
+
+        private val animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#BDBDBD"))
+            linkedBB.draw(canvas, paint)
+            animator.animate {
+                linkedBB.update {i, scale ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            linkedBB.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
